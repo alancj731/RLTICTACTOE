@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 
 interface SquareProps {
-  value: string | null
+  value: number | null
   onSquareClick: () => void
   isWinningSquare?: boolean
 }
@@ -16,13 +16,13 @@ export function Square({ value, onSquareClick, isWinningSquare = false }: Square
         "hover:bg-slate-100 dark:hover:bg-slate-800",
         "focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500",
         "active:scale-95 touch-manipulation",
-        value === "X" && "text-rose-500",
-        value === "O" && "text-sky-500",
+        value === -1 && "text-rose-500",
+        value === 1 && "text-sky-500",
         isWinningSquare && "bg-green-100 dark:bg-green-900 border-green-400 dark:border-green-700",
       )}
       onClick={onSquareClick}
     >
-      {value}
+      {value=== -1 ? "X" : value === 1 ? "O" : null}
     </button>
   )
 }

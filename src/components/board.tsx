@@ -2,18 +2,19 @@ import { Square } from "./square"
 
 interface BoardProps {
   xIsNext: boolean
-  squares: (string | null)[]
-  onPlay: (squares: (string | null)[]) => void
+  squares: (number | null)[]
+  onPlay: (squares: (number | null)[]) => void
 }
 
 export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
+  console.log("squares", squares)
   function handleClick(i: number) {
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares) || squares[i] !== 0) {
       return
     }
 
     const nextSquares = squares.slice()
-    nextSquares[i] = xIsNext ? "X" : "O"
+    nextSquares[i] = xIsNext ? -1 : 1
     onPlay(nextSquares)
   }
 
@@ -21,11 +22,11 @@ export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
   let status
 
   if (winner) {
-    status = winner === "X" ? "You win!" : "You lost!"
-  } else if (squares.every((square) => square !== null)) {
-    status = "Tie Game"
+    status = winner === -1 ? "You win!" : "You lost!"
+  } else if (squares.every((square) => square !== 0)) {
+    status = "A Tie!"
   } else {
-    status = `Next player: ${xIsNext ? "X" : "O"}`
+    status = `Next player: ${xIsNext ? -1 : 1}`
   }
 
   return (
@@ -47,7 +48,7 @@ export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
   )
 }
 
-function calculateWinner(squares: (string | null)[]) {
+function calculateWinner(squares: (number | null)[]) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -68,7 +69,7 @@ function calculateWinner(squares: (string | null)[]) {
   return null
 }
 
-function isWinningSquare(index: number, winner: string | null, squares: (string | null)[]): boolean {
+function isWinningSquare(index: number, winner: number | null, squares: (number | null)[]): boolean {
   if (!winner) return false
 
   const lines = [

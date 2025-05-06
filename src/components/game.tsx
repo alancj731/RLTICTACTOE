@@ -7,18 +7,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { RotateCcw, Brain, Download } from "lucide-react"
 
 export default function Game() {
-  const [squares, setSquares] = useState(Array(9).fill(null))
+  const [squares, setSquares] = useState(Array(9).fill(0))
   const [xIsNext, setXIsNext] = useState(true)
   const [isTraining, setIsTraining] = useState(false)
   const [modelLoaded, setModelLoaded] = useState(false)
 
-  function handlePlay(nextSquares: (string | null)[]) {
+  function handlePlay(nextSquares: (number | null)[]) {
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
   }
 
   function resetGame() {
-    setSquares(Array(9).fill(null))
+    setSquares(Array(9).fill(0))
     setXIsNext(true)
   }
 
