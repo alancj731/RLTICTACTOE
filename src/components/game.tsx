@@ -5,20 +5,23 @@ import Board from "./board"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { RotateCcw, Brain, Download } from "lucide-react"
+import { BOARD_ROWS, BOARD_COLS } from "@/global/constant"
+
+
 
 export default function Game() {
-  const [squares, setSquares] = useState(Array(9).fill(0))
+  const [squares, setSquares] = useState(Array(BOARD_ROWS).fill(0).map(() => Array(BOARD_COLS).fill(0)))
   const [xIsNext, setXIsNext] = useState(true)
   const [isTraining, setIsTraining] = useState(false)
   const [modelLoaded, setModelLoaded] = useState(false)
 
-  function handlePlay(nextSquares: (number | null)[]) {
+  function handlePlay(nextSquares: (number)[][]) {
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
   }
 
   function resetGame() {
-    setSquares(Array(9).fill(0))
+    setSquares(Array(BOARD_ROWS).fill(0).map(() => Array(BOARD_COLS).fill(0)))
     setXIsNext(true)
   }
 

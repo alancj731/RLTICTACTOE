@@ -1,20 +1,22 @@
 import { Square } from "./square"
+import { convertIndex } from "@/lib/utils"
 
 interface BoardProps {
   xIsNext: boolean
-  squares: (number | null)[]
-  onPlay: (squares: (number | null)[]) => void
+  squares: number[][]
+  onPlay: (squares: number[][]) => void
 }
 
 export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
   console.log("squares", squares)
-  function handleClick(i: number) {
-    if (calculateWinner(squares) || squares[i] !== 0) {
+  function handleClick(index: number) {
+    const { i, j } = convertIndex(index)
+    if (calculateWinner(squares) || squares[i][j] !== 0) {
       return
     }
 
     const nextSquares = squares.slice()
-    nextSquares[i] = xIsNext ? -1 : 1
+    nextSquares[i][j] = xIsNext ? -1 : 1
     onPlay(nextSquares)
   }
 
@@ -23,10 +25,10 @@ export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
 
   if (winner) {
     status = winner === -1 ? "You win!" : "You lost!"
-  } else if (squares.every((square) => square !== 0)) {
+  } else if (squares.every((row) => row.every((item) => item !== 0))) {
     status = "A Tie!"
   } else {
-    status = `Next player: ${xIsNext ? -1 : 1}`
+    status = `Player: ${xIsNext ? " You" : " Bot"}`
   }
 
   return (
@@ -35,12 +37,12 @@ export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
       <div className="grid grid-cols-3 gap-1 sm:gap-2 mx-auto">
         {Array(9)
           .fill(null)
-          .map((_, i) => (
+          .map((_, index) => (
             <Square
-              key={i}
-              value={squares[i]}
-              onSquareClick={() => handleClick(i)}
-              isWinningSquare={isWinningSquare(i, calculateWinner(squares), squares)}
+              key={index}
+              value={squares[convertIndex(index).i][convertIndex(index).j]}
+              onSquareClick={() => handleClick(index)}
+              isWinningSquare={calculateWinner(squares) !== null}
             />
           ))}
       </div>
@@ -48,7 +50,7 @@ export default function Board({ xIsNext, squares, onPlay }: BoardProps) {
   )
 }
 
-function calculateWinner(squares: (number | null)[]) {
+function calculateWinner(squares: number [][]) : number | null {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -60,16 +62,17 @@ function calculateWinner(squares: (number | null)[]) {
     [2, 4, 6],
   ]
 
+  const flatSquares = squares.flat()
   for (const [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
+    if (flatSquares[a] !== 0 && flatSquares[a] === flatSquares[b] && flatSquares[a] === flatSquares[c]) {
+      return flatSquares[a]
     }
   }
 
   return null
 }
 
-function isWinningSquare(index: number, winner: number | null, squares: (number | null)[]): boolean {
+function isWinningSquare(index: number, winner: number | null, squares: number[][]): boolean {
   if (!winner) return false
 
   const lines = [
