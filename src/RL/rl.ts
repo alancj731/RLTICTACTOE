@@ -2,18 +2,16 @@
 import fs from "fs";
 import readline from "readline";
 import dotenv from "dotenv";
-const { Storage } = require('@google-cloud/storage');
+import { Storage } from '@google-cloud/storage';
 
 dotenv.config();
 
-const GCP_POLICY_BUCKET = process.env.NEXT_PUBLIC_GCP_POLICY_BUCKET;
-const GCP_POLICY_FILE = process.env.NEXT_PUBLIC_GCP_POLICY_FILE;
-const GCP_KEY_PATH = process.env.NEXT_PUBLIC_GCP_KEY_PATH;
+const GCP_POLICY_BUCKET = process.env.NEXT_PUBLIC_GCP_POLICY_BUCKET || '';
+const GCP_POLICY_FILE = process.env.NEXT_PUBLIC_GCP_POLICY_FILE || '';
 
 
 const BOARD_ROWS = 3;
 const BOARD_COLS = 3;
-const BOARD_SIZE = BOARD_ROWS * BOARD_COLS;
 const INSEQUENCE = 3;
 
 // const storage = new Storage({
@@ -38,7 +36,7 @@ class State {
   end: boolean | null;
   hash_value: string | null;
 
-  constructor(initial: Boolean = false) {
+  constructor(initial: boolean = false) {
     this.winner = null;
     if (initial) {
       this.data = Array(BOARD_ROWS)
@@ -340,7 +338,7 @@ class Player {
       return action;
     }
 
-    let values: [number, number[]][] = [];
+    const values: [number, number[]][] = [];
     if (nextStates.length === 0) {
       console.error("No next states found.");
     }
@@ -461,34 +459,34 @@ class Judge {
   }
 }
 
-async function train(epochs: number = 5000, printEveryN: number = 500) {
-  const p1 = new Player(0, 0.1, 0.01);
-  const p2 = new Player(0, 0.1, 0.01);
-  const judge = new Judge(p1, p2);
-  let player1Wins = 0.0;
-  let player2Wins = 0.0;
-  let winner: number = 0;
-  for (let i = 0; i < epochs; i++) {
-    winner = await judge.play();
-    if (winner === 1) {
-      player1Wins += 1;
-    } else if (winner === -1) {
-      player2Wins += 1;
-    }
-    if (i % printEveryN === 0) {
-      console.log(
-        `Game ${i} finished. Player 1 wins: ${(player1Wins / (i + 1)).toFixed(
-          2
-        )}, Player 2 wins: ${(player2Wins / (i + 1)).toFixed(2)}`
-      );
-    }
-    p1.backPropagation();
-    p2.backPropagation();
-    judge.reset();
-  }
-  p1.savePolycy();
-  p2.savePolycy();
-}
+// async function train(epochs: number = 5000, printEveryN: number = 500) {
+//   const p1 = new Player(0, 0.1, 0.01);
+//   const p2 = new Player(0, 0.1, 0.01);
+//   const judge = new Judge(p1, p2);
+//   let player1Wins = 0.0;
+//   let player2Wins = 0.0;
+//   let winner: number = 0;
+//   for (let i = 0; i < epochs; i++) {
+//     winner = await judge.play();
+//     if (winner === 1) {
+//       player1Wins += 1;
+//     } else if (winner === -1) {
+//       player2Wins += 1;
+//     }
+//     if (i % printEveryN === 0) {
+//       console.log(
+//         `Game ${i} finished. Player 1 wins: ${(player1Wins / (i + 1)).toFixed(
+//           2
+//         )}, Player 2 wins: ${(player2Wins / (i + 1)).toFixed(2)}`
+//       );
+//     }
+//     p1.backPropagation();
+//     p2.backPropagation();
+//     judge.reset();
+//   }
+//   p1.savePolycy();
+//   p2.savePolycy();
+// }
 
 // Create a readline interface for user input
 const rl = readline.createInterface({
@@ -584,7 +582,7 @@ class WebGame {
 
     public async HumanAct(i: number, j: number) : Promise<{x: number, y: number} | null> {
         // update human action
-        let newState = new State();
+        const newState = new State();
         console.log("currentState", this.currentState);
         let data = this.currentState?.nextState(i, j, this.symbolP1) as number[][]
         console.log("next data", data);
@@ -599,7 +597,7 @@ class WebGame {
         if (this.currentState && this.currentState.end){
             return null
         }
-        const { x, y, symbol } = await this.p2.act();
+        const { x, y} = await this.p2.act();
 
         // update bot reaction
         data = this.currentState?.nextState(x, y, this.symbolP2) as number[][]

@@ -14,7 +14,7 @@ export default function Game() {
       .map(() => Array(BOARD_COLS).fill(0))
   );
   const [xIsNext, setXIsNext] = useState(true);
-  const [modelLoaded, setModelLoaded] = useState(false);
+  const [modelLoaded] = useState(false);
   const [usePretrained, setUsePretrained] = useState(false);
   const [loading, setLoading] = useState(true);
 

@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { BOARD_COLS, BOARD_ROWS } from "@/global/constant"
+import { BOARD_COLS } from "@/global/constant"
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
