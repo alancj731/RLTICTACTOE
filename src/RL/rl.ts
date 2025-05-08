@@ -390,103 +390,103 @@ class Player {
   }
 }
 
-// class Judge {
-//   p1: Player | HumanPlayer;
-//   p2: Player | HumanPlayer;
-//   current: Player | null;
-//   symbolP1: number;
-//   symbolP2: number;
+class Judge {
+  p1: Player | HumanPlayer;
+  p2: Player | HumanPlayer;
+  current: Player | null;
+  symbolP1: number;
+  symbolP2: number;
 
-//   constructor(p1: Player | HumanPlayer, p2: Player | HumanPlayer) {
-//     this.p1 = p1;
-//     this.p2 = p2;
-//     this.current = null;
-//     this.symbolP1 = 1;
-//     this.p1.setSymbol(this.symbolP1);
-//     this.symbolP2 = -1;
-//     this.p2.setSymbol(this.symbolP2);
-//   }
+  constructor(p1: Player | HumanPlayer, p2: Player | HumanPlayer) {
+    this.p1 = p1;
+    this.p2 = p2;
+    this.current = null;
+    this.symbolP1 = 1;
+    this.p1.setSymbol(this.symbolP1);
+    this.symbolP2 = -1;
+    this.p2.setSymbol(this.symbolP2);
+  }
 
-//   public reset() {
-//     this.p1.reset();
-//     this.p2.reset();
-//     this.current = null;
-//   }
+  public reset() {
+    this.p1.reset();
+    this.p2.reset();
+    this.current = null;
+  }
 
-//   public *alternate() {
-//     while (true) {
-//       console.log("p1 turn");
-//       yield this.p1;
-//       console.log("p2 turn");
-//       yield this.p2;
-//     }
-//   }
+  public *alternate() {
+    while (true) {
+      console.log("p1 turn");
+      yield this.p1;
+      console.log("p2 turn");
+      yield this.p2;
+    }
+  }
 
-//   public async play(printState: boolean = false): Promise<number> {
-//     const iterator = this.alternate();
-//     this.reset();
-//     let currentState = new State(true);
-//     this.p1.setState(currentState);
-//     this.p2.setState(currentState);
-//     if (printState) {
-//       currentState.showState();
-//     }
+  public async play(printState: boolean = false): Promise<number> {
+    const iterator = this.alternate();
+    this.reset();
+    let currentState = new State(true);
+    this.p1.setState(currentState);
+    this.p2.setState(currentState);
+    if (printState) {
+      currentState.showState();
+    }
 
-//     let player: Player | HumanPlayer = this.p1;
-//     while (true) {
-//       player = iterator.next().value as Player;
-//       const { x, y, symbol } = await player.act();
-//       console.log("x, y, symbol", x, y, symbol);
-//       const newState = new State();
-//       newState.setData(currentState.nextState(x, y, symbol));
-//       const nextHash = newState.hash_value;
-//       if (!nextHash) {
-//         console.error("Next state has no hash value.");
-//       }
-//       currentState = allStates[nextHash!];
-//       this.p1.setState(currentState);
-//       this.p2.setState(currentState);
-//       if (printState) {
-//         currentState.showState();
-//       }
-//       if (currentState.end) {
-//         if (currentState.winner === null) {
-//           console.error("Game ended with no winner.");
-//         }
-//         return currentState.winner as number;
-//       }
-//     }
-//   }
-// }
+    let player: Player | HumanPlayer = this.p1;
+    while (true) {
+      player = iterator.next().value as Player;
+      const { x, y, symbol } = await player.act();
+      console.log("x, y, symbol", x, y, symbol);
+      const newState = new State();
+      newState.setData(currentState.nextState(x, y, symbol));
+      const nextHash = newState.hash_value;
+      if (!nextHash) {
+        console.error("Next state has no hash value.");
+      }
+      currentState = allStates[nextHash!];
+      this.p1.setState(currentState);
+      this.p2.setState(currentState);
+      if (printState) {
+        currentState.showState();
+      }
+      if (currentState.end) {
+        if (currentState.winner === null) {
+          console.error("Game ended with no winner.");
+        }
+        return currentState.winner as number;
+      }
+    }
+  }
+}
 
-// async function train(epochs: number = 5000, printEveryN: number = 500) {
-//   const p1 = new Player(0, 0.1, 0.01);
-//   const p2 = new Player(0, 0.1, 0.01);
-//   const judge = new Judge(p1, p2);
-//   let player1Wins = 0.0;
-//   let player2Wins = 0.0;
-//   let winner: number = 0;
-//   for (let i = 0; i < epochs; i++) {
-//     winner = await judge.play();
-//     if (winner === 1) {
-//       player1Wins += 1;
-//     } else if (winner === -1) {
-//       player2Wins += 1;
-//     }
-//     if (i % printEveryN === 0) {
-//       console.log(
-//         `Game ${i} finished. Player 1 wins: ${(player1Wins / (i + 1)).toFixed(
-//           2
-//         )}, Player 2 wins: ${(player2Wins / (i + 1)).toFixed(2)}`
-//       );
-//     }
-//     p1.backPropagation();
-//     p2.backPropagation();
-//     judge.reset();
-//   }
-//   p1.savePolycy();
-//   p2.savePolycy();
-// }
+async function train(epochs: number = 5000, printEveryN: number = 500) {
+  const p1 = new Player(0, 0.1, 0.01);
+  const p2 = new Player(0, 0.1, 0.01);
+  const judge = new Judge(p1, p2);
+  let player1Wins = 0.0;
+  let player2Wins = 0.0;
+  let winner: number = 0;
+  for (let i = 0; i < epochs; i++) {
+    winner = await judge.play();
+    if (winner === 1) {
+      player1Wins += 1;
+    } else if (winner === -1) {
+      player2Wins += 1;
+    }
+    if (i % printEveryN === 0) {
+      console.log(
+        `Game ${i} finished. Player 1 wins: ${(player1Wins / (i + 1)).toFixed(
+          2
+        )}, Player 2 wins: ${(player2Wins / (i + 1)).toFixed(2)}`
+      );
+    }
+    p1.backPropagation();
+    p2.backPropagation();
+    judge.reset();
+  }
+  p1.savePolycy();
+  p2.savePolycy();
+}
 
 // Create a readline interface for user input
 const rl = readline.createInterface({
