@@ -1,11 +1,30 @@
 'use server'
 import fs from "fs";
 import readline from "readline";
+import dotenv from "dotenv";
+const { Storage } = require('@google-cloud/storage');
+
+dotenv.config();
+
+const GCP_POLICY_BUCKET = process.env.GCP_POLICY_BUCKET;
+const GCP_POLICY_FILE = process.env.GCP_POLICY_FILE;
+const GCP_KEY_PATH = process.env.GCP_KEY_PATH;
+
 
 const BOARD_ROWS = 3;
 const BOARD_COLS = 3;
 const BOARD_SIZE = BOARD_ROWS * BOARD_COLS;
 const INSEQUENCE = 3;
+
+const storage = new Storage({
+  keyFilename: GCP_KEY_PATH, 
+});
+
+async function readGcpFile() {
+  const file = storage.bucket(GCP_POLICY_BUCKET).file(GCP_POLICY_FILE);
+  const contents = await file.download();
+  return contents.toString();;
+}
 
 class State {
   data: number[][];
@@ -360,6 +379,11 @@ class Player {
     const data = fs.readFileSync(fileName, "utf-8");
     this.estimations = JSON.parse(data);
   }
+
+  public async loadPolicyFromGCP() {
+    const data = await readGcpFile();
+    this.estimations = JSON.parse(data);
+  }
 }
 
 class Judge {
@@ -517,6 +541,9 @@ class HumanPlayer {
   }
 }
 
+
+
+
 class WebGame {
     p1: HumanPlayer;
     p2: Player;
@@ -524,6 +551,7 @@ class WebGame {
     currentState: State | null = null;
     symbolP1 = 1;
     symbolP2 = -1;
+
 
     constructor(){
         this.p1 = new HumanPlayer();
@@ -538,7 +566,7 @@ class WebGame {
         if (usePolocy) {
           this.p2 = new Player(0, 0.1, 0.0);
           this.p2.setSymbol(this.symbolP2);
-          this.p2.loadPolicy();
+          this.p2.loadPolicyFromGCP();
         }
         else{
           this.p2 = new Player(0, 0.1, 0.2);
