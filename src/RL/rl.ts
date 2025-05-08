@@ -6,9 +6,9 @@ const { Storage } = require('@google-cloud/storage');
 
 dotenv.config();
 
-const GCP_POLICY_BUCKET = process.env.GCP_POLICY_BUCKET;
-const GCP_POLICY_FILE = process.env.GCP_POLICY_FILE;
-const GCP_KEY_PATH = process.env.GCP_KEY_PATH;
+const GCP_POLICY_BUCKET = process.env.NEXT_PUBLIC_GCP_POLICY_BUCKET;
+const GCP_POLICY_FILE = process.env.NEXT_PUBLIC_GCP_POLICY_FILE;
+const GCP_KEY_PATH = process.env.NEXT_PUBLIC_GCP_KEY_PATH;
 
 
 const BOARD_ROWS = 3;
