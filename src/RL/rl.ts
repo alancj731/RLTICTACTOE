@@ -16,9 +16,15 @@ const BOARD_COLS = 3;
 const BOARD_SIZE = BOARD_ROWS * BOARD_COLS;
 const INSEQUENCE = 3;
 
-const storage = new Storage({
-  keyFilename: GCP_KEY_PATH, 
-});
+// const storage = new Storage({
+//   keyFilename: GCP_KEY_PATH, 
+// });
+
+//set for vercel deployment
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON || '{}');
+const storage = new Storage({ credentials });
+
+
 
 async function readGcpFile() {
   const file = storage.bucket(GCP_POLICY_BUCKET).file(GCP_POLICY_FILE);
