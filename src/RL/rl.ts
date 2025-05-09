@@ -388,6 +388,7 @@ class Player {
     const data = await readGcpFile();
     this.estimations = JSON.parse(data);
   }
+
 }
 
 // class Judge {
