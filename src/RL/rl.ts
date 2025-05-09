@@ -3,6 +3,7 @@ import fs from "fs";
 import readline from "readline";
 import dotenv from "dotenv";
 import { Storage } from '@google-cloud/storage';
+import policy from "@/data/tranied_policy";
 
 dotenv.config();
 
@@ -388,6 +389,11 @@ class Player {
     const data = await readGcpFile();
     this.estimations = JSON.parse(data);
   }
+
+  public async loadPolicyFromMem() {
+    console.log("policy", policy);
+    this.estimations = policy;
+  }
 }
 
 class Judge {
@@ -570,7 +576,9 @@ class WebGame {
         if (usePolocy) {
           this.p2 = new Player(0, 0.1, 0.0);
           this.p2.setSymbol(this.symbolP2);
-          this.p2.loadPolicyFromGCP();
+          // this.p2.loadPolicyFromMem();
+          // this.p2.loadPolicyFromGCP();
+          this.p2.loadPolicy();
         }
         else{
           this.p2 = new Player(0, 0.1, 0.2);
