@@ -15,7 +15,7 @@ const BOARD_COLS = 3;
 const INSEQUENCE = 3;
 
 // const storage = new Storage({
-//   keyFilename: GCP_KEY_PATH, 
+//   keyFilename: process.env.NEXT_PUBLIC_GCP_KEY_PATH, 
 // });
 
 //set for vercel deployment
@@ -562,7 +562,7 @@ class WebGame {
         this.p2 = new Player(0, 0.1, 0.2);
     }
     
-    public start(usePolocy: boolean = false) {
+    public async start(usePolocy: boolean = false) {
         console.log("WebGame started");
         this.currentState = new State(true);
         this.p1.setState(this.currentState);
@@ -570,7 +570,7 @@ class WebGame {
         if (usePolocy) {
           this.p2 = new Player(0, 0.1, 0.0);
           this.p2.setSymbol(this.symbolP2);
-          this.p2.loadPolicyFromGCP();
+          await this.p2.loadPolicyFromGCP();
         }
         else{
           this.p2 = new Player(0, 0.1, 0.2);
@@ -615,7 +615,7 @@ class WebGame {
 const game = new WebGame();
 
 async function startGame(usePolocy: boolean = false) {
-  game.start(usePolocy);
+  await game.start(usePolocy);
   return 0;
 }
 
