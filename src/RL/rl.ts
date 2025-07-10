@@ -9,6 +9,9 @@ dotenv.config();
 const GCP_POLICY_BUCKET = process.env.NEXT_PUBLIC_GCP_POLICY_BUCKET || '';
 const GCP_POLICY_FILE = process.env.NEXT_PUBLIC_GCP_POLICY_FILE || '';
 
+console.log("GCP_POLICY_BUCKET", GCP_POLICY_BUCKET);
+console.log("GCP_POLICY_FILE", GCP_POLICY_FILE);
+
 
 const BOARD_ROWS = 3;
 const BOARD_COLS = 3;
@@ -21,6 +24,7 @@ const INSEQUENCE = 3;
 //set for vercel deployment
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON || '{}');
 const storage = new Storage({ credentials });
+console.log('crentials', credentials);
 
 
 
