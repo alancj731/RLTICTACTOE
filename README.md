@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RL Tic Tac Toe
 
-## Getting Started
+This is a Next.js tic-tac-toe app with a reinforcement-learning player. The pretrained policy files are loaded from `src/data` at runtime; the app does not use GCP for training data storage.
 
-First, run the development server:
+## Requirements
+
+- Node.js 22 or newer
+- npm
+- Docker, for container builds
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:7788](http://localhost:7788).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Build the app locally:
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the production server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The production server also listens on [http://localhost:7788](http://localhost:7788).
 
-## Deploy on Vercel
+## Training Data
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Policy data is stored in:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+src/data/policy_first.policy
+src/data/policy_second.policy
+```
+
+The Docker image copies `src/data` into the runtime container so pretrained play works without external credentials or cloud storage.
+
+## Docker
+
+Build the image:
+
+```bash
+docker build -t rltictactoe .
+```
+
+Run the container:
+
+```bash
+docker run --rm -p 7788:7788 rltictactoe
+```
+
+Open [http://localhost:7788](http://localhost:7788).
+
+## Useful Commands
+
+```bash
+npm run dev
+npm run build
+npm start
+```
