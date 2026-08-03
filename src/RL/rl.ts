@@ -1,37 +1,19 @@
 'use server'
 import fs from "fs";
+import path from "path";
 import readline from "readline";
-import dotenv from "dotenv";
-import { Storage } from '@google-cloud/storage';
-
-dotenv.config();
-
-const GCP_POLICY_BUCKET = process.env.NEXT_PUBLIC_GCP_POLICY_BUCKET || '';
-const GCP_POLICY_FILE = process.env.NEXT_PUBLIC_GCP_POLICY_FILE || '';
-
-console.log("GCP_POLICY_BUCKET", GCP_POLICY_BUCKET);
-console.log("GCP_POLICY_FILE", GCP_POLICY_FILE);
-
 
 const BOARD_ROWS = 3;
 const BOARD_COLS = 3;
 const INSEQUENCE = 3;
 
-// const storage = new Storage({
-//   keyFilename: process.env.NEXT_PUBLIC_GCP_KEY_PATH, 
-// });
-
-//set for vercel deployment
-const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON || '{}');
-const storage = new Storage({ credentials });
-console.log('crentials', credentials);
-
-
-
-async function readGcpFile() {
-  const file = storage.bucket(GCP_POLICY_BUCKET).file(GCP_POLICY_FILE);
-  const contents = await file.download();
-  return contents.toString();;
+function getPolicyFileName(symbol: number) {
+  return path.join(
+    process.cwd(),
+    "src",
+    "data",
+    `policy_${symbol === 1 ? "first" : "second"}.policy`
+  );
 }
 
 class State {
@@ -375,24 +357,15 @@ class Player {
   }
 
   public savePolycy() {
-    const fileName = `./src/data/policy_${
-      this.symbol === 1 ? "first" : "second"
-    }.policy`;
+    const fileName = getPolicyFileName(this.symbol);
     fs.writeFileSync(fileName, JSON.stringify(this.estimations));
   }
+
   public loadPolicy() {
-    const fileName = `./src/data/policy_${
-      this.symbol === 1 ? "first" : "second"
-    }.policy`;
+    const fileName = getPolicyFileName(this.symbol);
     const data = fs.readFileSync(fileName, "utf-8");
     this.estimations = JSON.parse(data);
   }
-
-  public async loadPolicyFromGCP() {
-    const data = await readGcpFile();
-    this.estimations = JSON.parse(data);
-  }
-
 }
 
 // class Judge {
@@ -575,7 +548,7 @@ class WebGame {
         if (usePolocy) {
           this.p2 = new Player(0, 0.1, 0.0);
           this.p2.setSymbol(this.symbolP2);
-          await this.p2.loadPolicyFromGCP();
+          this.p2.loadPolicy();
         }
         else{
           this.p2 = new Player(0, 0.1, 0.2);
@@ -629,4 +602,3 @@ async function userInput(i: number, j: number) {
   return result;
 }
 export { startGame, userInput }
-
